@@ -33,7 +33,7 @@ exports.getQuestion = catchAsync(async (req, res, next) => {
   const question = await Question.findById(req.params.id);
 
   if (!question) {
-    return next(new AppError("Question not find with that ID", 404));
+    return next(new AppError("Question not found with that ID", 404));
   }
 
   res.status(200).json({
