@@ -11,6 +11,7 @@ const userSchema = new mongoose.Schema({
     required: [true, "User must have lastname!"],
     minlength: [3, "Firstname must be at least 3 characters!"],
   },
+  photo: String,
   email: {
     type: String,
     required: [true, "User must have an email!"],
@@ -19,13 +20,15 @@ const userSchema = new mongoose.Schema({
         const reg = /^([\w\.\+]{1,})([^\W])(@)([\w]{1,})(\.[\w]{1,})+$/;
         return reg.test(val);
       },
-      message: "Enter valid email address, please!",
+      message: "Enter a valid email address, please!",
     },
     unique: true,
+    lowercase: true,
   },
   password: {
     type: String,
     required: [true, "User must have password!"],
+    minlength: [8, "Password must be at least 8 characters!"],
   },
 });
 
