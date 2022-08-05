@@ -1,3 +1,4 @@
+const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
@@ -30,6 +31,26 @@ const userSchema = new mongoose.Schema({
     required: [true, "User must have password!"],
     minlength: [8, "Password must be at least 8 characters!"],
   },
+  passwordConfirm: {
+    type: String,
+    required: [true, "Password must be confirmed!"],
+    validate: {
+      validator: function (el) {
+        return el === this.password;
+      },
+      message: "Password confirmation is failed!",
+    },
+  },
+});
+
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+
+  const salt = await bcrypt.genSalt(12);
+  this.password = await bcrypt.hash(this.password, salt);
+  this.passwordConfirm = undefined;
+
+  next();
 });
 
 const User = mongoose.model("User", userSchema);
