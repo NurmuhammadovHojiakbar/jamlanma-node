@@ -3,6 +3,12 @@ const catchAsync = require("../utils/catchAsync");
 const jwt = require("jsonwebtoken");
 const AppError = require("../utils/appError");
 
+const signToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_PASSWORD, {
+    expiresIn: process.env.JWT_EXPIRES_IN,
+  });
+};
+
 exports.register = catchAsync(async (req, res, next) => {
   const user = await User.create({
     firstname: req.body.firstname,
@@ -12,9 +18,7 @@ exports.register = catchAsync(async (req, res, next) => {
     passwordConfirm: req.body.passwordConfirm,
   });
 
-  const token = jwt.sign({ id: user._id }, process.env.JWT_PASSWORD, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
-  });
+  const token = signToken(user._id);
 
   res.status(201).json({
     status: "success",
@@ -36,15 +40,15 @@ exports.login = catchAsync(async (req, res, next) => {
     return next(new AppError("You entered invalid email!", 401));
   }
 
-  const result = user.correctPassword(password, user.password);
+  const result = await user.correctPassword(password, user.password);
 
   if (!result) {
     return next(new AppError("You entered invalid password!", 401));
   }
 
-  const token = jwt.sign({ id: user._id }, process.env.JWT_PASSWORD, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
-  });
+  console.log(result);
+
+  const token = signToken(user._id);
 
   res.status(200).json({
     status: "success",
