@@ -1,7 +1,6 @@
 const User = require("../models/userModel");
 const catchAsync = require("../utils/catchAsync");
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
 const AppError = require("../utils/appError");
 
 exports.register = catchAsync(async (req, res, next) => {
@@ -37,7 +36,7 @@ exports.login = catchAsync(async (req, res, next) => {
     return next(new AppError("You entered invalid email!", 400));
   }
 
-  const result = await bcrypt.compare(password, user.password);
+  const result = user.correctPassword(password, user.password);
 
   if (!result) {
     return next(new AppError("You entered invalid password!", 400));
