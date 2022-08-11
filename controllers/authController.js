@@ -33,13 +33,13 @@ exports.login = catchAsync(async (req, res, next) => {
 
   const user = await User.findOne({ email }).select("+password");
   if (!user) {
-    return next(new AppError("You entered invalid email!", 400));
+    return next(new AppError("You entered invalid email!", 401));
   }
 
   const result = user.correctPassword(password, user.password);
 
   if (!result) {
-    return next(new AppError("You entered invalid password!", 400));
+    return next(new AppError("You entered invalid password!", 401));
   }
 
   const token = jwt.sign({ id: user._id }, process.env.JWT_PASSWORD, {
