@@ -6,12 +6,12 @@ const authController = require("../controllers/authController");
 router.post("/register", authController.register);
 router.post("/login", authController.login);
 
-router.get("/", userController.getAllUsers);
+router.get("/", authController.protect, userController.getAllUsers);
 
 router
   .route("/:id")
-  .get(userController.getUser)
-  .put(userController.updateUser)
-  .delete(userController.deleteUser);
+  .get(authController.protect, userController.getUser)
+  .put(authController.protect, userController.updateUser)
+  .delete(authController.protect, userController.deleteUser);
 
 module.exports = router;
