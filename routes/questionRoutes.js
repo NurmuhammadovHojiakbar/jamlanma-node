@@ -22,6 +22,10 @@ router
   .route("/:id")
   .get(authController.protect, questionController.getQuestion)
   .patch(authController.protect, questionController.updateQuestion)
-  .delete(authController.protect, questionController.deleteQuestion);
+  .delete(
+    authController.protect,
+    authController.restrictTo("admin", "super-admin", "moderator"),
+    questionController.deleteQuestion
+  );
 
 module.exports = router;

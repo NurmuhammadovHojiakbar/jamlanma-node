@@ -42,6 +42,11 @@ const userSchema = new mongoose.Schema({
       message: "Password confirmation is failed!",
     },
   },
+  role: {
+    type: String,
+    enum: ["user", "moderator", "admin", "super-admin"],
+    default: "user",
+  },
 });
 
 userSchema.pre("save", async function (next) {
